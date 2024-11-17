@@ -91,6 +91,15 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
       aData = converted.data;
       patternsServer = converted.patterns;
 
+      const fileTags = !dataSrc.includes('#swagger.file.tags') ?
+        undefined :
+        swaggerTags.getTags(
+          (await handleData.getSwaggerComments(dataSrc))
+            .replace(
+              '#swagger.file.tags',
+              '#swagger.tags'
+            ),
+        );
       const filePath = !dataSrc.includes('#swagger.file.basePath') ?
         undefined :
         swaggerTags.getPath(
@@ -1389,6 +1398,10 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 objEndpoint[path][method]['tags'] = swaggerTags.getTags(endpoint, reference);
               } else if (globalSwaggerProperties && globalSwaggerProperties.includes(statics.SWAGGER_TAG + '.tags')) {
                 objEndpoint[path][method]['tags'] = swaggerTags.getTags(globalSwaggerProperties, reference);
+              }
+
+              if (fileTags?.length) {
+                objEndpoint[path][method]['tags'] = fileTags;
               }
 
               if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.security')) {
