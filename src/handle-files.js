@@ -1366,6 +1366,28 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
                 objEndpoint[path][method].requestBody = await swaggerTags.getRequestBodyTag(globalSwaggerProperties, reference);
               }
 
+              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.jsonBody')) {
+                const line = endpoint.split(new RegExp(`\\s*${statics.SWAGGER_TAG}.jsonBody\\s*\\=\\s*`))[1]
+                  .split('\n')[0];
+                const required = line.includes('required|');
+                const schema = (required ? line.split('required|')[1] : line).trim();
+
+                const body = {
+                  required,
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: `#/${schema}`,
+                      }
+                    },
+                  },
+                };
+                objEndpoint[path][method].requestBody = await swaggerTags.getRequestBodyTag(
+                  ['/*', `#swagger.requestBody = ${JSON.stringify(body)}`, '*/'].join('\n'),
+                  reference,
+                );
+              }
+
               if (!swaggerTags.getOpenAPI()) {
                 if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.produces')) {
                   objEndpoint[path][method].produces = await swaggerTags.getProducesTag(endpoint, reference);
