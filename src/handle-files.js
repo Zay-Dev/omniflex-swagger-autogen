@@ -1215,7 +1215,7 @@ function readEndpointFile(filePath, pathRoute = '', relativePath, receivedRouteM
 
             // Order
             objEndpoint[path][method] = {};
-            objEndpoint[path][method].tags = undefined;
+            objEndpoint[path][method].tags = [...(fileTags || [])];
             objEndpoint[path][method].summary = undefined;
             objEndpoint[path][method].description = '';
             objEndpoint[path][method].operationId = undefined;
