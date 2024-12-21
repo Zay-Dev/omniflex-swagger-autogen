@@ -7,6 +7,7 @@
     "pretest": "eslint --ignore-path .gitignore .",
     "test": "node test/index.js",
     "code-formatter": "prettier --config .prettierrc 'src/**/*.js' --write",
+    "tsc": "echo skip",
     "build": "echo skip"
   },
   "readmeFilename": "README.md",
